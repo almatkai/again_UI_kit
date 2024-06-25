@@ -17,7 +17,7 @@ final class RMRequest {
     
     /// Desired Endpoint
     private let endpoint: RMEndpoint
-    
+
     /// Path components for API if any
     private let pathComponents: Set<String>
     
@@ -49,6 +49,7 @@ final class RMRequest {
     
     /// Computed & constructed API url
     public var url: URL? {
+        print(urlString)
         return URL(string: urlString)
     }
     
@@ -65,4 +66,9 @@ final class RMRequest {
         self.pathComponents = pathComponents
         self.queryParameters = queryParameters
     }
+}
+
+extension RMRequest {
+    static let listCharactersRequests = RMRequest(endpoint: .character)
+    static let listEpisodesRequests = RMRequest(endpoint: .episode)
 }

@@ -9,21 +9,21 @@ import UIKit
 
 final class RMCharacterViewController: UIViewController {
 
+    private let characterListView = RMCharacterListView()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Character"
-        
-        let status: RMCharacterStatus = .alive
-        let request = RMRequest(endpoint: .character, queryParameters: [.init(name: "page", value: "2"), .init(name: "name", value: "rick"), .init(name: "status", value: status.rawValue)])
-        
-        RMService.shared.execute(request, expecting: RMCharacter.self, completion: { res in
-            switch res {
-            case .success(let success):
-                print(success.self)
-            case .failure(let failure):
-                print()
-            }
-        })
+        view.addSubview(characterListView)
+        setupLayout()
     }
-
+    
+    private func setupLayout() {
+        NSLayoutConstraint.activate([
+            characterListView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            characterListView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            characterListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            characterListView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+        ])
+    }
 }
