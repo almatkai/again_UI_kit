@@ -13,6 +13,7 @@ final class RMTabViewController: UITabBarController {
         super.viewDidLoad()
         setupTabs()
         view.backgroundColor = .systemBackground
+        view.tintColor = UIColor(.accentColor)
     }
 
     private func setupTabs() {
@@ -21,12 +22,6 @@ final class RMTabViewController: UITabBarController {
         let settingsVC = RMSettingsViewController()
         let episodeVC = RMEpisodeViewController()
         let locationVC = RMLocationViewController()
-        
-        /// Tittle mode automatic
-        characterVC.navigationItem.largeTitleDisplayMode = .automatic
-        settingsVC.navigationItem.largeTitleDisplayMode = .automatic
-        episodeVC.navigationItem.largeTitleDisplayMode = .automatic
-        locationVC.navigationItem.largeTitleDisplayMode = .automatic
         
         /// Init UINavigationController 
         let characterNav = UINavigationController(rootViewController: characterVC)

@@ -7,7 +7,12 @@
 
 import UIKit
 
-final class RMCharacterViewController: UIViewController {
+final class RMCharacterViewController: UIViewController, RMCharacterListViewDelegate {
+    func rmCharacterListView(_ rmCharacterListView: RMCharacterListView, _ character: RMCharacter) {
+        let detailVC = RMCharacterDetailViewController(viewModel: RMCharacterDetailViewViewModel(character: character))
+        detailVC.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
 
     private let characterListView = RMCharacterListView()
 
@@ -16,6 +21,7 @@ final class RMCharacterViewController: UIViewController {
         title = "Character"
         view.addSubview(characterListView)
         setupLayout()
+        characterListView.delegate = self
     }
     
     private func setupLayout() {
