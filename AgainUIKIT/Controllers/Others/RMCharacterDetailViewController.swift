@@ -30,7 +30,12 @@ class RMCharacterDetailViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapShare))
         setupCharacterDetailView()
+        
+        characterDetailView.collectionView?.dataSource = self
+        characterDetailView.collectionView?.delegate = self
+        
     }
     
     private func setupCharacterDetailView() {
@@ -42,4 +47,45 @@ class RMCharacterDetailViewController: UIViewController {
             characterDetailView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
+    
+    @objc 
+    private func didTapShare() {
+        print("Share tapped")
+    }
+}
+
+// MARK: - CollectionView
+
+extension RMCharacterDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource{
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return viewModel.sections.count
+    }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch section {
+        case 0:
+            return 1
+        case 1:
+            return 4
+        case 2:
+            return viewModel.character.episode?.count ?? 0
+        default:
+            return 0
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        switch indexPath.section {
+        case 0:
+            cell.backgroundColor = .systemRed
+        case 1:
+            cell.backgroundColor = .systemBlue
+        case 2:
+            cell.backgroundColor = .systemPink
+        default:
+            cell.backgroundColor = .brown
+        }
+        return cell
+    }
+    
 }

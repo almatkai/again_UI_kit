@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// Footer loading Spinner view for collection view
 class RMFooterLoadingCollectionReusableView: UICollectionReusableView {
     static let identifier = "RMFooterLoadingCollectionReusableView"
     
