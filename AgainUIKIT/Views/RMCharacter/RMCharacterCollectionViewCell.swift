@@ -11,6 +11,7 @@ import UIKit
 final class RMCharacterCollectionViewCell: UICollectionViewCell {
     static let cellIndetifier = "RMCharacterCollectionViewCell"
     
+    /// Image view for character image
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -20,6 +21,7 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
+    /// Label for character name
     private let nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = .systemFont(ofSize: 18, weight: .medium)
@@ -28,6 +30,7 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
         return nameLabel
     }()
     
+    /// Label for character status
     private let statusLabel: UILabel = {
         let statusLabel = UILabel()
         statusLabel.font = .systemFont(ofSize: 15, weight: .regular)
@@ -37,6 +40,7 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
     }()
     
     // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.backgroundColor = .secondarySystemBackground
@@ -62,6 +66,7 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
         setupLayer()
     }
     
+    /// Style for cell
     private func setupLayer() {
         contentView.layer.cornerRadius = 20
         contentView.layer.shadowRadius = 5
@@ -89,6 +94,9 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
         ])
     }
     
+    
+    /// Set up cell with view model
+    /// - Parameter viewModel: Stores character data for cell
     func configure(with viewModel: RMCharacterCollectionViewViewModel) {
         nameLabel.text = viewModel.characterName
         statusLabel.text = viewModel.characterStatusText

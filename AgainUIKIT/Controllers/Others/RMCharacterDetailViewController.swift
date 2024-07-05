@@ -31,15 +31,16 @@ class RMCharacterDetailViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapShare))
-        setupCharacterDetailView()
+        
+        view.addSubview(characterDetailView)
+        addConstraints()
         
         characterDetailView.collectionView?.dataSource = self
         characterDetailView.collectionView?.delegate = self
         
     }
     
-    private func setupCharacterDetailView() {
-        view.addSubview(characterDetailView)
+    private func addConstraints() {
         NSLayoutConstraint.activate([
             characterDetailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             characterDetailView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
@@ -56,36 +57,51 @@ class RMCharacterDetailViewController: UIViewController {
 
 // MARK: - CollectionView
 
-extension RMCharacterDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource{
+extension RMCharacterDetailViewController: 
+    UICollectionViewDelegate, UICollectionViewDataSource{
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return viewModel.sections.count
     }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch section {
-        case 0:
+        switch viewModel.sections[section] {
+        case .photo:
             return 1
-        case 1:
-            return 4
-        case 2:
-            return viewModel.character.episode?.count ?? 0
-        default:
-            return 0
+        case .information(let info):
+            return info.count
+        case .episodes(let episodes):
+            return episodes.count
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        switch indexPath.section {
-        case 0:
-            cell.backgroundColor = .systemRed
-        case 1:
-            cell.backgroundColor = .systemBlue
-        case 2:
-            cell.backgroundColor = .systemPink
-        default:
-            cell.backgroundColor = .brown
+        
+        switch viewModel.sections[indexPath.section] {
+        case .photo(let viewModel):
+            
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterPhotoCollectionViewCell.identifier, for: indexPath) as? RMCharacterPhotoCollectionViewCell else {
+                fatalError("Unsupported cell")
+            }
+            
+            cell.configure(with: RMCharacterPhotoCollectionViewCellViewModel(imageUrl: self.viewModel.character.image ?? ""))
+            return cell
+        case .information(let viewModels):
+            
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterInfoCollectionViewCell.identifier, for: indexPath) as? RMCharacterInfoCollectionViewCell else {
+                fatalError("Unsupported cell")
+            }
+            
+            cell.configure(with: viewModels[indexPath.row])
+            return cell
+        case .episodes(let viewModels):
+            
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterEpisodeCollectionViewCell.identifier, for: indexPath) as? RMCharacterEpisodeCollectionViewCell else {
+                fatalError("Unsupported cell")
+            }
+            
+            cell.configure(with: viewModels[indexPath.row])
+            return cell
         }
-        return cell
     }
-    
 }

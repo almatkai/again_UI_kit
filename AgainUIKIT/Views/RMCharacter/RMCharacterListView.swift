@@ -7,9 +7,14 @@
 
 import UIKit
 
+/// Delegate for RMCharacterListView
 protocol RMCharacterListViewDelegate: AnyObject {
+    
+    ///   Function that is called when character is selected
+    /// - Parameters:
+    ///   - rmCharacterListView:  Self
+    ///   - character:  Selected character
     func rmCharacterListView(
-        _ rmCharacterListView: RMCharacterListView,
         _ character: RMCharacter
     )
 }
@@ -21,6 +26,7 @@ final class RMCharacterListView: UIView {
     
     private let viewModel = RMCharacterListViewViewModel()
     
+    /// Spinner that is shown when loading characters
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.hidesWhenStopped = true
@@ -36,12 +42,17 @@ final class RMCharacterListView: UIView {
         collectionView.isHidden = true
         collectionView.alpha = 0
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        /// Register cells: RMCharacterCollectionViewCell, RMFooterLoadingCollectionReusableView
         collectionView.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.cellIndetifier)
+        
+        /// Footer loading spinner
         collectionView.register(RMFooterLoadingCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: RMFooterLoadingCollectionReusableView.identifier)
         return collectionView
     }()
     
     // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         translatesAutoresizingMaskIntoConstraints = false
@@ -78,7 +89,11 @@ final class RMCharacterListView: UIView {
     }
 }
 
+// MARK: - RMCharacterListViewViewModelDelegate
+
 extension RMCharacterListView: RMCharacterListViewViewModelDelegate {
+    
+    /// Function that is called when additional characters are loaded
     func didLoadAdditionalCharacters(with newIndexpath: [IndexPath]) {
         collectionView.performBatchUpdates({
             collectionView.insertItems(at: newIndexpath)
@@ -89,10 +104,13 @@ extension RMCharacterListView: RMCharacterListViewViewModelDelegate {
         })
     }
     
+    /// Function that is called when character is selected
+    /// and triggers rmCharacterListView so that the parent view controller can handle it
     func didSelectCharacter(_ character: RMCharacter) {
-        delegate?.rmCharacterListView(self, character)
+        delegate?.rmCharacterListView(character)
     }
     
+    /// Disables spinner and shows collection view when initial characters are loaded
     func didLoadInitialCharacters() {
         self.spinner.stopAnimating()
         self.collectionView.isHidden = false

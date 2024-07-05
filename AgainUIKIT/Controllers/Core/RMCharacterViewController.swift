@@ -7,12 +7,8 @@
 
 import UIKit
 
-final class RMCharacterViewController: UIViewController, RMCharacterListViewDelegate {
-    func rmCharacterListView(_ rmCharacterListView: RMCharacterListView, _ character: RMCharacter) {
-        let detailVC = RMCharacterDetailViewController(viewModel: RMCharacterDetailViewViewModel(character: character))
-        detailVC.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewController(detailVC, animated: true)
-    }
+/// RMCharacterViewController is a view controller that displays a list of characters.
+final class RMCharacterViewController: UIViewController {
 
     private let characterListView = RMCharacterListView()
 
@@ -31,5 +27,14 @@ final class RMCharacterViewController: UIViewController, RMCharacterListViewDele
             characterListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             characterListView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
+    }
+}
+
+extension RMCharacterViewController: RMCharacterListViewDelegate {
+    /// When a character is selected, show the detail view controller
+    func rmCharacterListView(_ character: RMCharacter) {
+        let detailVC = RMCharacterDetailViewController(viewModel: RMCharacterDetailViewViewModel(character: character))
+        detailVC.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(detailVC, animated: true)
     }
 }

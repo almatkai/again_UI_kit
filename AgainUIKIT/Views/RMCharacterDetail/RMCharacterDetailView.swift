@@ -31,7 +31,6 @@ class RMCharacterDetailView: UIView {
     init(viewModel: RMCharacterDetailViewViewModel, frame: CGRect) {
         self.viewModel = viewModel
         super.init(frame: frame)
-//        configure()
         backgroundColor = .systemBackground
         let collectionView = createCollectionView()
         self.collectionView = collectionView
@@ -60,7 +59,14 @@ class RMCharacterDetailView: UIView {
             return self.createSection(for: sectionIndex)
         }
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        
+        collectionView.register(RMCharacterPhotoCollectionViewCell.self,
+                                forCellWithReuseIdentifier: RMCharacterPhotoCollectionViewCell.identifier)
+        collectionView.register(RMCharacterInfoCollectionViewCell.self,
+                                forCellWithReuseIdentifier: RMCharacterInfoCollectionViewCell.identifier)
+        collectionView.register(RMCharacterEpisodeCollectionViewCell.self,
+                                forCellWithReuseIdentifier: RMCharacterEpisodeCollectionViewCell.identifier)
+        
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }

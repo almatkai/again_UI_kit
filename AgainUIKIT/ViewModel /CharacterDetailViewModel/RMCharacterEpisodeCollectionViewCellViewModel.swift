@@ -8,5 +8,6 @@
 import Foundation
 
 final class RMCharacterEpisodeCollectionViewCellViewModel {
+    static let identifier = "RMCharacterEpisodeCollectionViewCell"
     
 }

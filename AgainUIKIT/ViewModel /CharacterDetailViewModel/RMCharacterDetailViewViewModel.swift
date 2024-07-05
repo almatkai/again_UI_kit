@@ -10,29 +10,40 @@ import UIKit
 final class RMCharacterDetailViewViewModel {
     var character: RMCharacter
     
-    enum SectionTypes: CaseIterable{
-        case photo
-        case information
-        case episodes
+    enum SectionTypes {
+        case photo(viewModel: RMCharacterPhotoCollectionViewCellViewModel)
+        case information(viewModel: [RMCharacterInfoCollectionViewCellViewModel])
+        case episodes(viewModel: [RMCharacterEpisodeCollectionViewCellViewModel])
     }
     
-    public let sections = SectionTypes.allCases
+    public var sections: [SectionTypes] = []
     
     init(character: RMCharacter) {
         self.character = character
-}
+        setupSections()
+    }
     
     public var name: String {
         character.name?.uppercased() ?? "Unknown"
     }
     
-    public func fetchImage(completion: @escaping(Result<Data, Error>) -> Void) {
-        guard let url = URL(string: character.image ?? "") else {
-            completion(.failure(URLError(.badURL)))
-            return
+    private func setupSections() {
+        sections.append(.photo(viewModel: RMCharacterPhotoCollectionViewCellViewModel(imageUrl: character.image ?? "")))
+        
+        var infoViewModel: [RMCharacterInfoCollectionViewCellViewModel] = []
+        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
+        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
+        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
+        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
+        sections.append(.information(viewModel: infoViewModel))
+        
+        var episodesViewModel: [RMCharacterEpisodeCollectionViewCellViewModel] = []
+        if let episodes = character.episode {
+            episodes.forEach{ _ in
+                episodesViewModel.append(RMCharacterEpisodeCollectionViewCellViewModel())
+            }
         }
-        let request = URLRequest(url: url)
-        RMImageLoader.shared.downalodImage(url, completion: completion)
+        sections.append(.episodes(viewModel: episodesViewModel))
     }
     
     func createPhotoSection() -> NSCollectionLayoutSection {
