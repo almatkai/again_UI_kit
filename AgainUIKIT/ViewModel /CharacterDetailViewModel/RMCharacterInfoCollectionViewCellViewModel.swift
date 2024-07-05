@@ -9,4 +9,10 @@ import Foundation
 
 final class RMCharacterInfoCollectionViewCellViewModel {
     static let identifier = "RMCharacterInfoCollectionViewCell"
+    var text: String
+    
+    init(text: String) {
+        self.text = text
+    }
+
 }

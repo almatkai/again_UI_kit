@@ -45,7 +45,7 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         contentView.backgroundColor = .secondarySystemBackground
         contentView.addSubViews(imageView, nameLabel, statusLabel)
-        addConstraints()
+        setupConstrainsts()
         
         setupLayer()
     }
@@ -74,7 +74,7 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
         contentView.layer.shadowOpacity = 0.4
     }
     
-    private func addConstraints() {
+    private func setupConstrainsts() {
         NSLayoutConstraint.activate([
             nameLabel.heightAnchor.constraint(equalToConstant: 30),
             statusLabel.heightAnchor.constraint(equalToConstant: 30),

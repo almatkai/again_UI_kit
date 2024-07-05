@@ -33,14 +33,14 @@ class RMCharacterDetailViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapShare))
         
         view.addSubview(characterDetailView)
-        addConstraints()
+        setupConstrainsts()
         
         characterDetailView.collectionView?.dataSource = self
         characterDetailView.collectionView?.delegate = self
         
     }
     
-    private func addConstraints() {
+    private func setupConstrainsts() {
         NSLayoutConstraint.activate([
             characterDetailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             characterDetailView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
@@ -83,7 +83,6 @@ extension RMCharacterDetailViewController:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterPhotoCollectionViewCell.identifier, for: indexPath) as? RMCharacterPhotoCollectionViewCell else {
                 fatalError("Unsupported cell")
             }
-            
             cell.configure(with: RMCharacterPhotoCollectionViewCellViewModel(imageUrl: self.viewModel.character.image ?? ""))
             return cell
         case .information(let viewModels):
@@ -91,7 +90,6 @@ extension RMCharacterDetailViewController:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterInfoCollectionViewCell.identifier, for: indexPath) as? RMCharacterInfoCollectionViewCell else {
                 fatalError("Unsupported cell")
             }
-            
             cell.configure(with: viewModels[indexPath.row])
             return cell
         case .episodes(let viewModels):
@@ -99,7 +97,6 @@ extension RMCharacterDetailViewController:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterEpisodeCollectionViewCell.identifier, for: indexPath) as? RMCharacterEpisodeCollectionViewCell else {
                 fatalError("Unsupported cell")
             }
-            
             cell.configure(with: viewModels[indexPath.row])
             return cell
         }

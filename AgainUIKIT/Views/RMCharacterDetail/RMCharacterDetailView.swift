@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RMCharacterDetailView: UIView {
+final class RMCharacterDetailView: UIView {
 
     private var viewModel: RMCharacterDetailViewViewModel
     
@@ -37,7 +37,7 @@ class RMCharacterDetailView: UIView {
         if let collectionView = self.collectionView {
             addSubview(collectionView)
         }
-        addConstraints()
+        setupConstrainsts()
     }
     
     required init?(coder: NSCoder) {
@@ -45,7 +45,7 @@ class RMCharacterDetailView: UIView {
     }
 
     
-    private func addConstraints() {
+    private func setupConstrainsts() {
         guard let collectionView = collectionView else { return }
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: topAnchor),
@@ -54,6 +54,7 @@ class RMCharacterDetailView: UIView {
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
+    
     private func createCollectionView() -> UICollectionView {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, _ in
             return self.createSection(for: sectionIndex)

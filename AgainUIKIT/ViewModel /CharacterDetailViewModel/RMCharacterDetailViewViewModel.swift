@@ -30,20 +30,9 @@ final class RMCharacterDetailViewViewModel {
     private func setupSections() {
         sections.append(.photo(viewModel: RMCharacterPhotoCollectionViewCellViewModel(imageUrl: character.image ?? "")))
         
-        var infoViewModel: [RMCharacterInfoCollectionViewCellViewModel] = []
-        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
-        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
-        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
-        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
-        sections.append(.information(viewModel: infoViewModel))
+        sections.append(.information(viewModel: setupInfoVM()))
         
-        var episodesViewModel: [RMCharacterEpisodeCollectionViewCellViewModel] = []
-        if let episodes = character.episode {
-            episodes.forEach{ _ in
-                episodesViewModel.append(RMCharacterEpisodeCollectionViewCellViewModel())
-            }
-        }
-        sections.append(.episodes(viewModel: episodesViewModel))
+        sections.append(.episodes(viewModel: setupEpisodesVM()))
     }
     
     func createPhotoSection() -> NSCollectionLayoutSection {
@@ -103,6 +92,47 @@ final class RMCharacterDetailViewViewModel {
         return section
     }
 
+    private func setupInfoVM() -> [RMCharacterInfoCollectionViewCellViewModel] {
+        var infoViewModel: [RMCharacterInfoCollectionViewCellViewModel] = []
+        
+        if let name = character.name {
+            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: name))
+        }
+
+        if let status = character.status?.text {
+            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: status))
+        }
+
+        let typeSpecies = "\(character.type ?? "") \(character.species ?? "")"
+        if !typeSpecies.trimmingCharacters(in: .whitespaces).isEmpty {
+            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: typeSpecies))
+        }
+
+        if let gender = character.gender?.rawValue {
+            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: gender))
+        }
+
+        if let origin = character.origin?.name, origin != "unknown"{
+            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: origin))
+        }
+
+        if let location = character.location?.name {
+            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: location))
+        }
+        
+        return infoViewModel
+    }
+    
+    private func setupEpisodesVM() -> [RMCharacterEpisodeCollectionViewCellViewModel] {
+        var episodesViewModel: [RMCharacterEpisodeCollectionViewCellViewModel] = []
+        
+        for episode in character.episode ?? [] {
+            guard let url = URL(string: episode) else { break }
+            episodesViewModel.append(RMCharacterEpisodeCollectionViewCellViewModel(episodeUrl: url))
+        }
+        
+        return episodesViewModel
+    }
     
     func createEpisodesSection() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(
