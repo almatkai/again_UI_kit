@@ -111,7 +111,7 @@ final class RMCharacterDetailViewViewModel {
         if let gender = character.gender?.rawValue {
             infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: gender))
         }
-
+fefe
         if let origin = character.origin?.name, origin != "unknown"{
             infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: origin))
         }
