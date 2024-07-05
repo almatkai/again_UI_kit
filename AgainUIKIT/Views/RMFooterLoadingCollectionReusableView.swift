@@ -21,14 +21,14 @@ class RMFooterLoadingCollectionReusableView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(spinner)
-        addConstraints()
+        setupConstrainsts()
     }
     
     required init?(coder: NSCoder) {
         fatalError("Not supported")
     }
     
-    private func addConstraints() {
+    private func setupConstrainsts() {
         NSLayoutConstraint.activate([
             spinner.leftAnchor.constraint(equalTo: leftAnchor),
             spinner.rightAnchor.constraint(equalTo: rightAnchor),

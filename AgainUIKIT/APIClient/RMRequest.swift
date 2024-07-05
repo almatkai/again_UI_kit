@@ -76,10 +76,11 @@ final class RMRequest {
         let trimmed = stringURL.replacingOccurrences(of: "\(Constants.baseUrl)", with: "")
         if trimmed.contains ("/") {
             let components = trimmed.components(separatedBy: "/")
-            if components.isEmpty {
+            if !components.isEmpty {
                 let endpointString = components[0]
+                let pathComponent: Set<String> = [components[1]]
                 if let rmEndpoint = RMEndpoint(rawValue: endpointString) {
-                    self.init(endpoint: rmEndpoint)
+                    self.init(endpoint: rmEndpoint, pathComponents: pathComponent)
                     return
                 }
             }
