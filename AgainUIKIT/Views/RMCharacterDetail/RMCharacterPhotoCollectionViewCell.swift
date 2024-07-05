@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
+final class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
     static let identifier = "RMCharacterPhotoCollectionViewCell"
     
     private let imageView: UIImageView = {
@@ -22,7 +22,7 @@ class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(imageView)
-        addConstraints()
+        setupConstrainsts()
     }
     
     required init?(coder: NSCoder) {
@@ -34,7 +34,7 @@ class RMCharacterPhotoCollectionViewCell: UICollectionViewCell {
         imageView.image = nil
     }
     
-    private func addConstraints() {
+    private func setupConstrainsts() {
         NSLayoutConstraint.activate([
             imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
