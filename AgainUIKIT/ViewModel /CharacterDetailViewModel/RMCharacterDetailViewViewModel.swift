@@ -141,7 +141,6 @@ final class RMCharacterDetailViewViewModel {
                 heightDimension: .fractionalHeight(1)
             )
         )
-        ewfewfewf
         item.contentInsets = NSDirectionalEdgeInsets(
                                 top: 3,
                                 leading: 10,
