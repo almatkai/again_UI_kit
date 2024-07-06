@@ -96,7 +96,7 @@ final class RMCharacterDetailViewViewModel {
         var infoViewModel: [RMCharacterInfoCollectionViewCellViewModel] = []
         
         if let name = character.name {
-            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: name))
+            infoViewModel.append(.init(text: name))
         }
 
         if let status = character.status?.text {
@@ -105,19 +105,19 @@ final class RMCharacterDetailViewViewModel {
 
         let typeSpecies = "\(character.type ?? "") \(character.species ?? "")"
         if !typeSpecies.trimmingCharacters(in: .whitespaces).isEmpty {
-            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: typeSpecies))
+            infoViewModel.append(.init(text: typeSpecies))
         }
 
         if let gender = character.gender?.rawValue {
-            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: gender))
+            infoViewModel.append(.init(text: gender))
         }
 
         if let origin = character.origin?.name, origin != "unknown"{
-            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: origin))
+            infoViewModel.append(.init(text: origin))
         }
 
         if let location = character.location?.name {
-            infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel(text: location))
+            infoViewModel.append(.init(text: location))
         }
         
         return infoViewModel
