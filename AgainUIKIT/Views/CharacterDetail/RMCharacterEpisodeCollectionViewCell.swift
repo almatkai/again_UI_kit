@@ -67,10 +67,10 @@ class RMCharacterEpisodeCollectionViewCell: UICollectionViewCell {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            containerView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8),
-            containerView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8),
-            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            containerView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
+            containerView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             
             name.topAnchor.constraint(equalTo: containerView.topAnchor),
             name.leftAnchor.constraint(equalTo: containerView.leftAnchor),

@@ -10,7 +10,10 @@ import Foundation
 final class RMCharacterEpisodeCollectionViewCellViewModel {
     static let identifier = "RMCharacterEpisodeCollectionViewCell"
     
+    
     private let episodeUrl: URL?
+    var episode: RMEpisode?
+    var characters: [RMCharacter] = []
     
     init(episodeUrl: URL?) {
         self.episodeUrl = episodeUrl
@@ -30,6 +33,7 @@ final class RMCharacterEpisodeCollectionViewCellViewModel {
                     self.fetchSingleCharacter(url: $0, completion: { result in
                         switch result {
                         case .success(let character):
+                            self.characters.append(character)
                             charactersNames.append(character.name ?? "Missing")
                         case .failure(let error):
                             print(error)
@@ -37,7 +41,7 @@ final class RMCharacterEpisodeCollectionViewCellViewModel {
                         dispatchGroup.leave()
                     })
                 }
-                
+                self.episode = episode
                 dispatchGroup.notify(queue: .main) {
                     completion(.success((episode, charactersNames)))
                 }

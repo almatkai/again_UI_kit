@@ -135,7 +135,7 @@ final class RMCharacterDetailViewViewModel {
                 heightDimension: .absolute(150)
             ),
             subitems: [item]
-        )
+    )
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
         return section

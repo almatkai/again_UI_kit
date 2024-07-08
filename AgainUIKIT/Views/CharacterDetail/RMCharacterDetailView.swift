@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class RMCharacterDetailView: UIView {
 
     private var viewModel: RMCharacterDetailViewViewModel
