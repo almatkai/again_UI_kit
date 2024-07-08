@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class RMCharacterDetailViewController: UIViewController {
     
     private let viewModel: RMCharacterDetailViewViewModel
@@ -41,7 +42,7 @@ class RMCharacterDetailViewController: UIViewController {
     }
     
     private func addConstraints() {
-        NSLayoutConstraint.activate([
+    NSLayoutConstraint.activate([
             characterDetailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             characterDetailView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             characterDetailView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
@@ -49,15 +50,30 @@ class RMCharacterDetailViewController: UIViewController {
         ])
     }
     
-    @objc 
-    private func didTapShare() {
-        print("Share tapped")
+    @objc
+    private func didTapShare(sender:UIView) {
+        UIGraphicsBeginImageContext(view.frame.size)
+        view.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        let textToShare = "Check out my app"
+        
+        if let myWebsite = URL(string: viewModel.character.url ?? "") {//Enter link to your app here
+            let objectsToShare = [textToShare, myWebsite, image ?? #imageLiteral(resourceName: "app-logo")] as [Any]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            
+            
+            
+            activityVC.popoverPresentationController?.sourceView = sender
+            self.present(activityVC, animated: true, completion: nil)
+        }
     }
 }
 
 // MARK: - CollectionView
 
-extension RMCharacterDetailViewController: 
+extension RMCharacterDetailViewController:
     UICollectionViewDelegate, UICollectionViewDataSource{
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -78,7 +94,7 @@ extension RMCharacterDetailViewController:
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         switch viewModel.sections[indexPath.section] {
-        case .photo(let viewModel):
+        case .photo:
             
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMCharacterPhotoCollectionViewCell.identifier, for: indexPath) as? RMCharacterPhotoCollectionViewCell else {
                 fatalError("Unsupported cell")
@@ -104,4 +120,18 @@ extension RMCharacterDetailViewController:
             return cell
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch viewModel.sections[indexPath.section] {
+        case .photo, .information:
+            break // Handle other sections if needed
+        case .episodes(let viewModel):
+            let viewModel = viewModel[indexPath.row]
+            guard let episode = viewModel.episode else { return }
+            let episodeDetailViewModel = RMEpisodeViewModel(epidsode: episode, characters: viewModel.characters)
+            let detailVC = RMEpisodeDetailViewController(viewModel: episodeDetailViewModel)
+            self.navigationController?.pushViewController(detailVC, animated: true)
+        }
+    }
 }
+

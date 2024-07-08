@@ -43,7 +43,7 @@ final class RMCharacterListView: UIView {
         collectionView.alpha = 0
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        /// Register cells: RMCharacterCollectionViewCell, RMFooterLoadingCollectionReusableView
+        /// Register cells: RMCharacterCollectionViewCell
         collectionView.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.cellIndetifier)
         
         /// Footer loading spinner
@@ -71,11 +71,13 @@ final class RMCharacterListView: UIView {
     
     private func addConstraints() {
         NSLayoutConstraint.activate([
+            /// Set the spinner size to 100 and center it
             spinner.widthAnchor.constraint(equalToConstant: 100),
             spinner.heightAnchor.constraint(equalToConstant: 100),
             spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
             spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
             
+            /// Set the collection view to fill the whole view
             collectionView.topAnchor.constraint(equalTo: topAnchor),
             collectionView.leftAnchor.constraint(equalTo: leftAnchor),
             collectionView.rightAnchor.constraint(equalTo: rightAnchor),

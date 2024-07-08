@@ -76,6 +76,7 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
     
     private func addConstraints() {
         NSLayoutConstraint.activate([
+            
             nameLabel.heightAnchor.constraint(equalToConstant: 30),
             statusLabel.heightAnchor.constraint(equalToConstant: 30),
             
@@ -84,9 +85,11 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
             statusLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -12),
             statusLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 12),
             
+            /// Name label is above status label
             statusLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -7),
             nameLabel.bottomAnchor.constraint(equalTo: statusLabel.topAnchor),
             
+            /// Image view is above name label
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 12),
             imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -12),
@@ -100,6 +103,7 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
     func configure(with viewModel: RMCharacterCollectionViewViewModel) {
         nameLabel.text = viewModel.characterName
         statusLabel.text = viewModel.characterStatusText
+        print("CONGIGURE")
         viewModel.fetchImage(completion: { [weak self] result in
             switch result {
             case .success(let data):

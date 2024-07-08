@@ -25,9 +25,13 @@ final class RMCharacterCollectionViewViewModel {
     
     public func fetchImage(completion: @escaping(Result<Data, Error>) -> Void) {
         guard let url = characterImageURL else {
+            print("IMAGE URL IS NIL")
             completion(.failure(URLError(.badURL)))
             return
         }
+        print("""
+            Fetching image from: \(url)
+            """)
         let request = URLRequest(url: url)
         RMImageLoader.shared.downalodImage(url, completion: completion)
     }

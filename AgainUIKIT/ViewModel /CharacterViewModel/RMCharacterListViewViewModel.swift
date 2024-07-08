@@ -114,7 +114,6 @@ extension RMCharacterListViewViewModel: UICollectionViewDataSource, UICollection
         return CGSize(width: collectionView.frame.width, height: 100)
     }
     
-    /// Footer
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: RMCharacterCollectionViewCell.cellIndetifier,

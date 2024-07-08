@@ -30,20 +30,32 @@ final class RMCharacterDetailViewViewModel {
     private func setupSections() {
         sections.append(.photo(viewModel: RMCharacterPhotoCollectionViewCellViewModel(imageUrl: character.image ?? "")))
         
+        sections.append(.information(viewModel: setupInfoSection()))
+        sections.append(.episodes(viewModel: setupEpisodeSection()))
+    }
+    
+    private func setupInfoSection() -> [RMCharacterInfoCollectionViewCellViewModel] {
         var infoViewModel: [RMCharacterInfoCollectionViewCellViewModel] = []
-        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
-        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
-        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
-        infoViewModel.append(RMCharacterInfoCollectionViewCellViewModel())
-        sections.append(.information(viewModel: infoViewModel))
-        
+        infoViewModel.append(.init(type: .name, content: character.name ?? ""))
+        infoViewModel.append(.init(type: .status, content: character.status?.rawValue ?? ""))
+        infoViewModel.append(.init(type: .type, content: character.type ?? ""))
+        infoViewModel.append(.init(type: .species, content: character.species ?? ""))
+        infoViewModel.append(.init(type: .gender, content: character.gender?.rawValue ?? ""))
+        infoViewModel.append(.init(type: .origin, content: character.origin?.name ?? ""))
+        infoViewModel.append(.init(type: .location, content: character.location?.name ?? ""))
+        infoViewModel.append(.init(type: .created, content: character.created ?? ""))
+        return infoViewModel
+    }
+    
+    private func setupEpisodeSection() -> [RMCharacterEpisodeCollectionViewCellViewModel] {
         var episodesViewModel: [RMCharacterEpisodeCollectionViewCellViewModel] = []
         if let episodes = character.episode {
-            episodes.forEach{ _ in
-                episodesViewModel.append(RMCharacterEpisodeCollectionViewCellViewModel())
+            episodes.forEach{ episode in
+                episodesViewModel.append(
+                    .init(episodeUrl: URL(string: episode)))
             }
         }
-        sections.append(.episodes(viewModel: episodesViewModel))
+        return episodesViewModel
     }
     
     func createPhotoSection() -> NSCollectionLayoutSection {
@@ -123,7 +135,7 @@ final class RMCharacterDetailViewViewModel {
                 heightDimension: .absolute(150)
             ),
             subitems: [item]
-        )
+    )
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
         return section
