@@ -103,7 +103,6 @@ final class RMCharacterCollectionViewCell: UICollectionViewCell {
     func configure(with viewModel: RMCharacterCollectionViewViewModel) {
         nameLabel.text = viewModel.characterName
         statusLabel.text = viewModel.characterStatusText
-        print("CONGIGURE")
         viewModel.fetchImage(completion: { [weak self] result in
             switch result {
             case .success(let data):

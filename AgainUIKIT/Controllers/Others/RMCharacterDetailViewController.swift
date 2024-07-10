@@ -21,6 +21,7 @@ class RMCharacterDetailViewController: UIViewController {
     init(viewModel: RMCharacterDetailViewViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        title = viewModel.name
     }
     
     required init?(coder: NSCoder) {

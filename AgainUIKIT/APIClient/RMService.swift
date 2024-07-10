@@ -13,6 +13,9 @@ final class RMService {
     /// Shared singleton instance
     static let shared = RMService()
     
+    /// Cache manager for API data
+    private let cacheManager = RMApiCacheManager()
+    
     /// Privatized constructor
     private init() {}
     
@@ -29,23 +32,39 @@ final class RMService {
     public func execute<T: Codable>( _ rmRequest: RMRequest,
                              expecting type: T.Type,
                                      completion: @escaping (Result<T, Error>) -> Void ) {
+        
+        if let data = cacheManager.getCachedData(
+                for: rmRequest.url) {
+            print("Returning cached data")
+            do {
+                let result = try JSONDecoder().decode(type.self, from: data)
+                completion(.success(result))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        
         guard let request = request(from: rmRequest) else {
             completion(.failure(RMServiceError.failedToCreateRequest))
             return
         }
-        let task = URLSession.shared.dataTask(with: request, completionHandler: { data, _ , error in
+        
+        let task = URLSession.shared.dataTask(with: request, completionHandler: { [weak self] data, _ , error in
             guard let data = data, error == nil else {
                 completion(.failure(error ?? RMServiceError.failedToGetData))
                 return
             }
             
             do {
-                let json = try JSONSerialization.jsonObject(with: data)
-                print("")
                 let result = try JSONDecoder().decode(type.self, from: data)
+                DispatchQueue.global(qos: .background).async {
+                    self?.cacheManager.cacheData(
+                        for: request.url,
+                        data: data)
+                }
                 completion(.success(result))
-            } catch {
-                print("Here is the error")
+            } catch { 
+                print("Error in RMService: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         })

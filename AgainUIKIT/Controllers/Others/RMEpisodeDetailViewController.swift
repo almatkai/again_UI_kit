@@ -46,12 +46,25 @@ class RMEpisodeDetailViewController: UIViewController {
 }
 
 extension RMEpisodeDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch viewModel.sections[section] {
         case .episode:
             return 1
         case .character:
             return viewModel.characters.count
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch viewModel.sections[indexPath.section] {
+        case .episode(let episode):
+            break
+        case .character(let characters):
+            let character = characters[indexPath.row]
+            let characterDetailViewModel = RMCharacterDetailViewViewModel(character: character)
+            let characterDetailViewController = RMCharacterDetailViewController(viewModel: characterDetailViewModel)
+            navigationController?.pushViewController(characterDetailViewController, animated: true)
         }
     }
     
@@ -80,4 +93,27 @@ extension RMEpisodeDetailViewController: UICollectionViewDelegate, UICollectionV
             return cell
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader else {
+            return UICollectionReusableView()
+        }
+        
+        let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: RMHeaderCollectionReusableView.identifier,
+            for: indexPath
+        ) as! RMHeaderCollectionReusableView
+        
+        let section = viewModel.sections[indexPath.section]
+        switch section {
+        case .episode:
+            header.setLabelText(text: "Episode Info")
+        case .character:
+            header.setLabelText(text: "Characters")
+        }
+        
+        return header
+    }
+    
 }

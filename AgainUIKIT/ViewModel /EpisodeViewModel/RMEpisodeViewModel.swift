@@ -11,6 +11,8 @@ final class RMEpisodeViewModel {
     let epidsode: RMEpisode
     let characters: [RMCharacter]
     
+    // MARK: - Init
+    
     init(epidsode: RMEpisode, characters: [RMCharacter]) {
         self.epidsode = epidsode
         self.characters = characters
@@ -19,6 +21,9 @@ final class RMEpisodeViewModel {
     
     var sections: [Section] = []
     
+    /// Two sections: episode and characters
+    /// Episode section Stores episode information: name, air date, episode code, ...
+    /// Characters section stores all characters that are in this episode
     enum Section {
         case episode(epidsode: RMEpisode)
         case character(characters: [RMCharacter])
@@ -29,6 +34,8 @@ final class RMEpisodeViewModel {
         sections.append(.character(characters: characters))
     }
     
+    /// Returns a collection layout section for episode
+    ///  - Returns: NSCollectionLayoutSection
     func createEpisodeSection() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(
             layoutSize: NSCollectionLayoutSize(
@@ -46,9 +53,9 @@ final class RMEpisodeViewModel {
         )
         group.contentInsets = NSDirectionalEdgeInsets(
                                 top: 7,
-                                leading: 7,
+                                leading: 10,
                                 bottom: 3,
-                                trailing: 7
+                                trailing: 10
                             )
         let section = NSCollectionLayoutSection(group: group)
         return section
@@ -74,16 +81,35 @@ final class RMEpisodeViewModel {
                 widthDimension: .fractionalWidth(1),
                 heightDimension: .fractionalWidth(0.64)
             ),
+            /// 2 rows of Characters
             subitems: [item, item]
         )
         
-        group.contentInsets = NSDirectionalEdgeInsets(
+        let section = NSCollectionLayoutSection(group: group)
+        
+        /// Header part of the section
+        let header  = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .absolute(100)
+            ),
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+        header.contentInsets = NSDirectionalEdgeInsets(
+                                top: 40,
+                                leading: 16,
+                                bottom: 7,
+                                trailing: 7
+                                )
+        
+        section.boundarySupplementaryItems = [header]
+        section.contentInsets = NSDirectionalEdgeInsets(
                                 top: 0,
                                 leading: 3,
                                 bottom: 0,
                                 trailing: 3
                                 )
-        let section = NSCollectionLayoutSection(group: group)
         
         return section
     }

@@ -27,18 +27,20 @@ class RMEpisodeDetailView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func createCollectionView() -> UICollectionView {
-        let layout = UICollectionViewCompositionalLayout { index, _ in
-            self.createSection(for: index)
-        }
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-
-        collectionView.register(RMEpisodeDescriptionCollectionViewCell.self, forCellWithReuseIdentifier: RMEpisodeDescriptionCollectionViewCell.identifier)
-        collectionView.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.cellIndetifier)
-
-        return collectionView
+private func createCollectionView() -> UICollectionView {
+    let layout = UICollectionViewCompositionalLayout { index, _ in
+        self.createSection(for: index)
     }
+    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+    collectionView.translatesAutoresizingMaskIntoConstraints = false
+
+    collectionView.register(RMEpisodeDescriptionCollectionViewCell.self, forCellWithReuseIdentifier: RMEpisodeDescriptionCollectionViewCell.identifier)
+    collectionView.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.cellIndetifier)
+    collectionView.register(RMHeaderCollectionReusableView.self,
+                            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                            withReuseIdentifier: RMHeaderCollectionReusableView.identifier)
+    return collectionView
+}
     
     private func setupConstraints() {
         guard let collectionView = collectionView else { return }
