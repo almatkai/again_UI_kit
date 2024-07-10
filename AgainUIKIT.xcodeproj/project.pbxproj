@@ -111,6 +111,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3F199B3F2C3EB52B00E5CFBA /* SettingsViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SettingsViewModel;
+			sourceTree = "<group>";
+		};
 		3F1FDA442C3BD3AE00F3EEF4 /* EpisodeViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -171,6 +178,7 @@
 		3F7F90CE2C2B31740095FB9E /* ViewModel  */ = {
 			isa = PBXGroup;
 			children = (
+				3F199B3F2C3EB52B00E5CFBA /* SettingsViewModel */,
 				3F1FDA442C3BD3AE00F3EEF4 /* EpisodeViewModel */,
 				3F31FF4D2C352DFE00D9E555 /* CharacterViewModel */,
 				3F31FF4E2C352E3200D9E555 /* CharacterDetailViewModel */,
@@ -571,6 +579,7 @@
 				DEVELOPMENT_TEAM = Q9W4TA863G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgainUIKIT/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Rick and Morty";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -599,6 +608,7 @@
 				DEVELOPMENT_TEAM = Q9W4TA863G;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AgainUIKIT/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Rick and Morty";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
