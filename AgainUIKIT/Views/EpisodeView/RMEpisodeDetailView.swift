@@ -9,10 +9,10 @@ import UIKit
 
 class RMEpisodeDetailView: UIView {
     
-    private let viewModel: RMEpisodeViewModel
+    private let viewModel: RMEpisodeViewCellViewModel
     public var collectionView: UICollectionView?
     
-    init(viewModel: RMEpisodeViewModel, frame: CGRect) {
+    init(viewModel: RMEpisodeViewCellViewModel, frame: CGRect) {
         self.viewModel = viewModel
         super.init(frame: frame)
         let collectionView = createCollectionView()

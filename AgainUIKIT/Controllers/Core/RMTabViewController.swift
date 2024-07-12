@@ -31,13 +31,14 @@ final class RMTabViewController: UITabBarController {
     
         /// Init UITabBarItem
         characterNav.tabBarItem = UITabBarItem(title: "Character", image: UIImage(systemName: "person"), tag: 0)
-        episodeNav.tabBarItem = UITabBarItem(title: "Episode", image: UIImage(systemName: "tv"), tag: 2)
-        locationNav.tabBarItem = UITabBarItem(title: "Location", image: UIImage(systemName: "location"), tag: 3)
-        settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear"), tag: 1)
+        episodeNav.tabBarItem = UITabBarItem(title: "Episode", image: UIImage(systemName: "tv"), tag: 1)
+        locationNav.tabBarItem = UITabBarItem(title: "Location", image: UIImage(systemName: "location"), tag: 2)
+        settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear"), tag: 3)
         
         for nav in [characterNav, episodeNav, locationNav, settingsNav]{
             nav.navigationBar.prefersLargeTitles = true
         }
+        self.selectedIndex = 2
         tabBar.tintColor = .label
         setViewControllers([characterNav, episodeNav, locationNav, settingsNav], animated: true)
     }

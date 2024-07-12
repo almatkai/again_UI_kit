@@ -9,7 +9,7 @@ import UIKit
 
 class RMEpisodeDetailViewController: UIViewController {
     
-    private let viewModel: RMEpisodeViewModel
+    private let viewModel: RMEpisodeViewCellViewModel
     
     private lazy var episodeDetailView: RMEpisodeDetailView = {
         let view = RMEpisodeDetailView(viewModel: self.viewModel, frame: view.bounds)
@@ -17,7 +17,7 @@ class RMEpisodeDetailViewController: UIViewController {
         return view
     }()
     
-    init(viewModel: RMEpisodeViewModel) {
+    init(viewModel: RMEpisodeViewCellViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
