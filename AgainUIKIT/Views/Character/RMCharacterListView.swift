@@ -114,10 +114,15 @@ extension RMCharacterListView: RMCharacterListViewViewModelDelegate {
     
     /// Disables spinner and shows collection view when initial characters are loaded
     func didLoadInitialCharacters() {
-        self.spinner.stopAnimating()
-        self.collectionView.isHidden = false
+        spinner.stopAnimating()
         collectionView.reloadData()
-        UIView.animate(withDuration: 0.4, animations: {
+        collectionView.isHidden = false
+        collectionView.transform = CGAffineTransform(
+            translationX: 0,
+            y: self.bounds.height / 2).scaledBy(x: 0.1, y: 0.1)
+        
+        UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5, options: [], animations: {
+            self.collectionView.transform = .identity
             self.collectionView.alpha = 1
         })
     }

@@ -15,19 +15,19 @@ class RMEpisodeView: UIView {
         layout.scrollDirection = .vertical
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(RMEpisodeViewCell.self, forCellWithReuseIdentifier: RMEpisodeViewCell.identifier)
-//        collectionView.isHidden = true
-//        collectionView.alpha = 0
+        collectionView.isHidden = true
+        collectionView.alpha = 0
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
     
-//    private let spinner: UIActivityIndicatorView = {
-//        let spinner = UIActivityIndicatorView()
-//        spinner.hidesWhenStopped = true
-//        spinner.startAnimating()
-//        spinner.translatesAutoresizingMaskIntoConstraints = false
-//        return spinner
-//    }()
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView()
+        spinner.hidesWhenStopped = true
+        spinner.startAnimating()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
+    }()
     
     private let viewModel = RMEpisodeViewModel()
 
@@ -36,7 +36,7 @@ class RMEpisodeView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         viewModel.fetchEpisodes()
         setupCollectionView()
-        addSubViews(collectionView)
+        addSubViews(collectionView, spinner)
         setupConstraints()
     }
     
@@ -51,16 +51,34 @@ class RMEpisodeView: UIView {
             collectionView.rightAnchor.constraint(equalTo: rightAnchor),
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-//            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
-//            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
-//            spinner.widthAnchor.constraint(equalToConstant: 100),
-//            spinner.heightAnchor.constraint(equalToConstant: 100)
+            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
+            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
+            spinner.widthAnchor.constraint(equalToConstant: 100),
+            spinner.heightAnchor.constraint(equalToConstant: 100)
         ])
     }
     
     private func setupCollectionView() {
         collectionView.delegate = viewModel
         collectionView.dataSource = viewModel
+        
+        viewModel.delegate = self
     }
     
+}
+
+extension RMEpisodeView: RMEpisodeViewDelegate {
+    func initialEpisodesFetched() {
+        spinner.stopAnimating()
+        collectionView.reloadData()
+        collectionView.isHidden = false
+        collectionView.transform = CGAffineTransform(
+            translationX: 0,
+            y: self.bounds.height / 2).scaledBy(x: 0.1, y: 0.1)
+        
+        UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5, options: [], animations: {
+            self.collectionView.transform = .identity
+            self.collectionView.alpha = 1
+        })
+    }
 }
