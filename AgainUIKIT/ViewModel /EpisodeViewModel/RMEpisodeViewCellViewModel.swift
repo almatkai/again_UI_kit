@@ -8,13 +8,13 @@
 import UIKit
 
 final class RMEpisodeViewCellViewModel {
-    let epidsode: RMEpisode
+    let episode: RMEpisode
     let characters: [RMCharacter]
-    
+
     // MARK: - Init
-    
-    init(epidsode: RMEpisode, characters: [RMCharacter]) {
-        self.epidsode = epidsode
+
+    init(episode: RMEpisode, characters: [RMCharacter]) {
+        self.episode = episode
         self.characters = characters
         setupSections()
     }
@@ -25,12 +25,12 @@ final class RMEpisodeViewCellViewModel {
     /// Episode section Stores episode information: name, air date, episode code, ...
     /// Characters section stores all characters that are in this episode
     enum Section {
-        case episode(epidsode: RMEpisode)
+        case episode(episode: RMEpisode)
         case character(characters: [RMCharacter])
     }
     
     private func setupSections() {
-        sections.append(.episode(epidsode: epidsode))
+        sections.append(.episode(episode: episode))
         sections.append(.character(characters: characters))
     }
     

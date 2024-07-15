@@ -9,6 +9,7 @@ import UIKit
 
 protocol RMEpisodeViewDelegate: AnyObject {
     func initialEpisodesFetched()
+    func didLoadAdditionalCharacters(with newIndexpath: [IndexPath])
 }
 
 final class RMEpisodeViewModel: NSObject {
@@ -16,39 +17,74 @@ final class RMEpisodeViewModel: NSObject {
     weak var delegate: RMEpisodeViewDelegate?
     
     var info: RMInfo? = nil
-    var episodes: [RMEpisode] = []
+    var episodeViewModels: [RMEpisodeViewCellViewModel] = []
+    var loadingMore = false
     
     func fetchEpisodes() {
-        RMService.shared.execute(
-            .listEpisodesRequests,
-            expecting: RMResponse<RMEpisode>.self,
-            completion: { [weak self] res in
-                guard let self = self else { return }
-                switch res {
-                case .success(let response):
-                    self.info = response.info
-                    self.episodes = response.results
-                    DispatchQueue.main.async {
-                        self.delegate?.initialEpisodesFetched()
+        RMService.shared.execute(.listEpisodesRequests, expecting: RMResponse<RMEpisode>.self) { [weak self] result in
+            switch result {
+            case .success(let response):
+                self?.info = response.info
+                let episodes = response.results
+                self?.fetchCharactersForEpisodes(episodes)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+
+    private func fetchCharactersForEpisodes(_ episodes: [RMEpisode]) {
+        let dispatchGroup = DispatchGroup()
+        var episodeViewModels: [RMEpisodeViewCellViewModel] = []
+
+        for episode in episodes {
+            guard let characterURLs = episode.characters else { continue }
+            var characters: [RMCharacter] = []
+
+            for urlString in characterURLs {
+                guard let url = URL(string: urlString) else { continue }
+                dispatchGroup.enter()
+                fetchCharacters(url: url) { result in
+                    defer { dispatchGroup.leave() }
+                    switch result {
+                    case .success(let character):
+                        characters.append(character)
+                    case .failure(let error):
+                        print(error)
                     }
-                case .failure(let error):
-                    print(error.localizedDescription)
                 }
-            })
+            }
+
+            dispatchGroup.notify(queue: .main) {
+                let viewModel = RMEpisodeViewCellViewModel(episode: episode, characters: characters)
+                episodeViewModels.append(viewModel)
+            }
+        }
+
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            self?.episodeViewModels = episodeViewModels
+            self?.delegate?.initialEpisodesFetched()
+        }
+    }
+    
+    private func fetchCharacters(url: URL, completion: @escaping (Result<RMCharacter, Error>) -> Void) {
+        guard let rmRequest = RMRequest(url: url) else { return }
+        RMService.shared.execute(rmRequest, expecting: RMCharacter.self, completion: {
+            completion($0)
+        })
     }
 }
 
 extension RMEpisodeViewModel: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        episodes.count
+        episodeViewModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMEpisodeViewCell.identifier, for: indexPath) as? RMEpisodeViewCell else {
             fatalError("Cell type mismatch")
         }
-        cell.contentView.backgroundColor = .blue
-        cell.configure(episodeName: episodes[indexPath.row].name ?? "Missing")
+        cell.configure(viewModel: episodeViewModels[indexPath.row])
         return cell
     }
 
@@ -56,11 +92,30 @@ extension RMEpisodeViewModel: UICollectionViewDelegate, UICollectionViewDataSour
         let bounds = UIScreen.main.bounds
         return CGSize(width: bounds.width - 24, height: 0.2 * bounds.height)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard let footer = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: RMFooterLoadingCollectionReusableView.identifier, for: indexPath) as? RMFooterLoadingCollectionReusableView else {
+            fatalError("Footer type mismatch")
+        }
+        if info?.next != nil {
+            footer.startAnimating()
+        }
+        return footer
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+
+        return CGSize(width: collectionView.frame.width, height: 100)
+    }
 }
 
 extension RMEpisodeViewModel: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print(scrollView.contentOffset.y)
-        print(episodes.count)
+        let offset = scrollView.contentOffset.y
+        let totalLength = (episodeViewModels.count - 2) * 150
+        if Int(offset) - totalLength > 0, !loadingMore, info?.next != nil {
+            loadingMore = true
+            fetchEpisodes(episodeURL: URL(string: info!.next!))
+        }
     }
 }

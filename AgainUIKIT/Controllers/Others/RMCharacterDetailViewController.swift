@@ -129,7 +129,7 @@ extension RMCharacterDetailViewController:
         case .episodes(let viewModel):
             let viewModel = viewModel[indexPath.row]
             guard let episode = viewModel.episode else { return }
-            let episodeDetailViewModel = RMEpisodeViewCellViewModel(epidsode: episode, characters: viewModel.characters)
+            let episodeDetailViewModel = RMEpisodeViewCellViewModel(episode: episode, characters: viewModel.characters)
             let detailVC = RMEpisodeDetailViewController(viewModel: episodeDetailViewModel)
             self.navigationController?.pushViewController(detailVC, animated: true)
         }

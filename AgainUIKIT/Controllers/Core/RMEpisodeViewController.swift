@@ -14,7 +14,7 @@ final class RMEpisodeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Episode"
-        
+        episodeView.viewModel.fetchEpisodes()
         view.addSubview(episodeView)
         setupConstraints()
     }
