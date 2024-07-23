@@ -35,7 +35,6 @@ final class RMService {
         
         if let data = cacheManager.getCachedData(
                 for: rmRequest.url) {
-            print("Returning cached data")
             do {
                 let result = try JSONDecoder().decode(type.self, from: data)
                 completion(.success(result))

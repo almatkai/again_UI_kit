@@ -7,7 +7,13 @@
 
 import UIKit
 
-class RMEpisodeView: UIView {
+protocol RMEpisodeViewDelegate: AnyObject {
+    func didTappedEpisode(viewModel: RMEpisodeViewCellViewModel)
+}
+
+class RMEpisodeView: UIView, RMEpisodeViewDelegate {
+    
+    weak var delegate: RMEpisodeViewDelegate?
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -73,7 +79,11 @@ class RMEpisodeView: UIView {
     
 }
 
-extension RMEpisodeView: RMEpisodeViewDelegate {
+extension RMEpisodeView: RMEpisodeViewModelDelegate {
+    func didTappedEpisode(viewModel: RMEpisodeViewCellViewModel) {
+        delegate?.didTappedEpisode(viewModel: viewModel)
+    }
+    
     
     /// Function that is called when additional characters are loaded
     func didLoadAdditionalCharacters(with newIndexpath: [IndexPath]) {

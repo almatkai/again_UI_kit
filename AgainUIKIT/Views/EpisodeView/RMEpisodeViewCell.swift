@@ -31,7 +31,7 @@ class RMEpisodeViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 16, weight: .light)
         label.textColor = .white
-        label.numberOfLines = 5
+        label.numberOfLines = 6
         label.textColor = .secondaryLabel
         return label
     }()
@@ -69,7 +69,8 @@ class RMEpisodeViewCell: UICollectionViewCell {
             
             characters.leftAnchor.constraint(equalTo: containerView.leftAnchor),
             characters.rightAnchor.constraint(equalTo: containerView.rightAnchor),
-            characters.topAnchor.constraint(equalTo: name.bottomAnchor),
+            characters.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 6),
+            characters.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -4),
         ])
     }
     
@@ -83,6 +84,14 @@ class RMEpisodeViewCell: UICollectionViewCell {
     
     func configure(viewModel: RMEpisodeViewCellViewModel) {
         name.text = viewModel.episode.name
-        characters.text = viewModel.characters.compactMap({ $0.name }).joined(separator: ", ")
+        viewModel.fetchCharacters(completion: { [weak self] result in
+            switch result {
+            case .success(let characters):
+                self?.characters.text = characters.compactMap({ $0.name }).joined(separator: ", ")
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
+            }
+        })
     }
+
 }

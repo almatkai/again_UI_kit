@@ -7,75 +7,72 @@
 
 import UIKit
 
-protocol RMEpisodeViewDelegate: AnyObject {
+protocol RMEpisodeViewModelDelegate: AnyObject {
     func initialEpisodesFetched()
     func didLoadAdditionalCharacters(with newIndexpath: [IndexPath])
+    func didTappedEpisode(viewModel: RMEpisodeViewCellViewModel)
 }
 
 final class RMEpisodeViewModel: NSObject {
     
-    weak var delegate: RMEpisodeViewDelegate?
+    weak var delegate: RMEpisodeViewModelDelegate?
     
     var info: RMInfo? = nil
     var episodeViewModels: [RMEpisodeViewCellViewModel] = []
     var loadingMore = false
     
-    func fetchEpisodes() {
-        RMService.shared.execute(.listEpisodesRequests, expecting: RMResponse<RMEpisode>.self) { [weak self] result in
+    func fetchEpisodes(episodesURL: URL? = nil) {
+        var rmRequest: RMRequest = .listEpisodesRequests
+        if let episodesURL = episodesURL {
+            guard let request = RMRequest(url: episodesURL) else { return }
+            rmRequest = request
+        }
+        RMService.shared.execute(rmRequest, expecting: RMResponse<RMEpisode>.self, completion: {
+            [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let response):
-                self?.info = response.info
-                let episodes = response.results
-                self?.fetchCharactersForEpisodes(episodes)
+                self.info = response.info
+                self.setupEpisodeViewModel(episodes: response.results) {
+                    DispatchQueue.main.async {
+                        if episodesURL != nil {
+                            let indexPath = (self.episodeViewModels.count - response.results.count ..< self.episodeViewModels.count).map { IndexPath(row: $0, section: 0)}
+                            self.delegate?.didLoadAdditionalCharacters(
+                                with: indexPath)
+                        } else {
+                            self.delegate?.initialEpisodesFetched()
+                        }
+                        self.loadingMore = false
+                    }
+                }
             case .failure(let error):
                 print(error)
             }
-        }
-    }
-
-    private func fetchCharactersForEpisodes(_ episodes: [RMEpisode]) {
-        let dispatchGroup = DispatchGroup()
-        var episodeViewModels: [RMEpisodeViewCellViewModel] = []
-
-        for episode in episodes {
-            guard let characterURLs = episode.characters else { continue }
-            var characters: [RMCharacter] = []
-
-            for urlString in characterURLs {
-                guard let url = URL(string: urlString) else { continue }
-                dispatchGroup.enter()
-                fetchCharacters(url: url) { result in
-                    defer { dispatchGroup.leave() }
-                    switch result {
-                    case .success(let character):
-                        characters.append(character)
-                    case .failure(let error):
-                        print(error)
-                    }
-                }
-            }
-
-            dispatchGroup.notify(queue: .main) {
-                let viewModel = RMEpisodeViewCellViewModel(episode: episode, characters: characters)
-                episodeViewModels.append(viewModel)
-            }
-        }
-
-        dispatchGroup.notify(queue: .main) { [weak self] in
-            self?.episodeViewModels = episodeViewModels
-            self?.delegate?.initialEpisodesFetched()
-        }
+        })
     }
     
-    private func fetchCharacters(url: URL, completion: @escaping (Result<RMCharacter, Error>) -> Void) {
-        guard let rmRequest = RMRequest(url: url) else { return }
-        RMService.shared.execute(rmRequest, expecting: RMCharacter.self, completion: {
-            completion($0)
-        })
+    private func setupEpisodeViewModel(episodes: [RMEpisode], completion: @escaping () -> Void) {
+        var indexPaths = [IndexPath]()
+        let startCount = self.episodeViewModels.count
+        let group = DispatchGroup()
+
+        episodes.forEach { episode in
+            guard let characterURLs = episode.characters else { return }
+
+            self.episodeViewModels.append(RMEpisodeViewCellViewModel(episode: episode))
+            let indexPath = IndexPath(row: startCount + indexPaths.count, section: 0)
+            indexPaths.append(indexPath)
+            
+        }
+
+        group.notify(queue: .main) {
+            completion()
+        }
     }
 }
 
 extension RMEpisodeViewModel: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         episodeViewModels.count
     }
@@ -97,25 +94,31 @@ extension RMEpisodeViewModel: UICollectionViewDelegate, UICollectionViewDataSour
         guard let footer = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: RMFooterLoadingCollectionReusableView.identifier, for: indexPath) as? RMFooterLoadingCollectionReusableView else {
             fatalError("Footer type mismatch")
         }
-        if info?.next != nil {
-            footer.startAnimating()
-        }
+        info?.next != nil ? footer.startAnimating() : footer.stopAnimating()
+        
         return footer
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-
-        return CGSize(width: collectionView.frame.width, height: 100)
+        return CGSize(width: collectionView.frame.width, height: info?.next != nil ? 100 : 0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        delegate?.didTappedEpisode(viewModel: episodeViewModels[indexPath.row])
     }
 }
 
 extension RMEpisodeViewModel: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offset = scrollView.contentOffset.y
-        let totalLength = (episodeViewModels.count - 2) * 150
+        let totalLength = (episodeViewModels.count - 1) * 150
         if Int(offset) - totalLength > 0, !loadingMore, info?.next != nil {
             loadingMore = true
-            fetchEpisodes(episodeURL: URL(string: info!.next!))
+            guard let url = URL(string: info!.next!) else {
+                loadingMore = false
+                return
+            }
+            fetchEpisodes(episodesURL: url)
         }
     }
 }

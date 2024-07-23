@@ -9,6 +9,7 @@ import UIKit
 
 final class RMEpisodeViewController: UIViewController {
     
+    
     private let episodeView = RMEpisodeView()
 
     override func viewDidLoad() {
@@ -17,6 +18,8 @@ final class RMEpisodeViewController: UIViewController {
         episodeView.viewModel.fetchEpisodes()
         view.addSubview(episodeView)
         setupConstraints()
+        
+        episodeView.delegate = self
     }
     
     private func setupConstraints() {
@@ -27,5 +30,11 @@ final class RMEpisodeViewController: UIViewController {
             episodeView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
+}
 
+extension RMEpisodeViewController:  RMEpisodeViewDelegate {
+    func didTappedEpisode(viewModel: RMEpisodeViewCellViewModel) {
+        let detailVC = RMEpisodeDetailViewController(viewModel: viewModel)
+        self.navigationController?.pushViewController(detailVC, animated: true)
+    }
 }

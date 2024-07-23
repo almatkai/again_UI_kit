@@ -29,7 +29,6 @@ final class RMCharacterDetailViewViewModel {
     
     private func setupSections() {
         sections.append(.photo(viewModel: RMCharacterPhotoCollectionViewCellViewModel(imageUrl: character.image ?? "")))
-        
         sections.append(.information(viewModel: setupInfoSection()))
         sections.append(.episodes(viewModel: setupEpisodeSection()))
     }

@@ -19,11 +19,13 @@ final class RMCharacterEpisodeCollectionViewCellViewModel {
     }
     
     func fetchEpisode(completion: @escaping (Result<(RMEpisode, [String]), Error>) -> Void) {
+        
         guard let episodeUrl = episodeUrl,
               let request = RMRequest(url: episodeUrl) else {
             completion(.failure(NSError(domain: "Invalid URL", code: 0, userInfo: nil)))
             return
         }
+        
         RMService.shared.execute(request, expecting: RMEpisode.self) { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -70,7 +72,6 @@ final class RMCharacterEpisodeCollectionViewCellViewModel {
             completion(.failure(NSError(domain: "Invalid URL", code: 0, userInfo: nil)))
             return
         }
-        
         RMService.shared.execute(request, expecting: RMCharacter.self, completion: completion)
     }
 }

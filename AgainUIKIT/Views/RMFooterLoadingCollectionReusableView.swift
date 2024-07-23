@@ -40,4 +40,8 @@ class RMFooterLoadingCollectionReusableView: UICollectionReusableView {
     public func startAnimating() {
         spinner.startAnimating()
     }
+    
+    public func stopAnimating() {
+        spinner.stopAnimating()
+    }
 }

@@ -73,6 +73,7 @@ extension RMEpisodeDetailViewController: UICollectionViewDelegate, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        viewModel.sections[1] = .character(characters: viewModel.characters)
         switch viewModel.sections[indexPath.section] {
         case .episode(let episode):
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RMEpisodeDescriptionCollectionViewCell.identifier, for: indexPath) as? RMEpisodeDescriptionCollectionViewCell else {

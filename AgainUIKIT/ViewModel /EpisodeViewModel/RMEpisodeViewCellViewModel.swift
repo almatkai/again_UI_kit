@@ -9,13 +9,13 @@ import UIKit
 
 final class RMEpisodeViewCellViewModel {
     let episode: RMEpisode
-    let characters: [RMCharacter]
+    var characters: [RMCharacter] = []
 
     // MARK: - Init
 
-    init(episode: RMEpisode, characters: [RMCharacter]) {
-        self.episode = episode
+    init(episode: RMEpisode, characters: [RMCharacter] = []) {
         self.characters = characters
+        self.episode = episode
         setupSections()
     }
     
@@ -29,7 +29,7 @@ final class RMEpisodeViewCellViewModel {
         case character(characters: [RMCharacter])
     }
     
-    private func setupSections() {
+    func setupSections() {
         sections.append(.episode(episode: episode))
         sections.append(.character(characters: characters))
     }
@@ -114,4 +114,42 @@ final class RMEpisodeViewCellViewModel {
         return section
     }
 
+    func fetchCharacters(completion: @escaping(Result<[RMCharacter], Error>) -> Void) {
+        guard let characterUrlsStr = episode.characters else {
+            completion(.failure(NSError(domain: "Invalid URL", code: 0, userInfo: nil)))
+            return
+        }
+        let characterUrls: [URL] = characterUrlsStr.compactMap {
+            guard let url = URL(string: $0) else { return nil }
+            return url
+        }
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        var fetchErrors: [Error] = []
+        DispatchQueue.global(qos: .userInitiated).async {
+            for charUrl in characterUrls {
+                self.fetchSingleCharacter(url: charUrl) { result in
+                    switch result {
+                    case .success(let character):
+                        self.characters.append(character)
+                        semaphore.signal()
+                    case .failure(let error):
+                        fetchErrors.append(error)
+                    }
+                }
+                semaphore.wait()
+            }
+            DispatchQueue.main.async {
+                completion(.success(self.characters))
+            }
+        }
+    }
+    
+    private func fetchSingleCharacter(url: URL, completion: @escaping (Result<RMCharacter, Error>) -> Void) {
+        guard let request = RMRequest(url: url) else {
+            completion(.failure(NSError(domain: "Invalid URL", code: 0, userInfo: nil)))
+            return
+        }
+        RMService.shared.execute(request, expecting: RMCharacter.self, completion: completion)
+    }
 }
